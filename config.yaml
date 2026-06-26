@@ -1,0 +1,77 @@
+# EWA — Elliott Wave Agent Config
+# ห้าม commit .env หรือ key จริงลงไฟล์นี้
+# key ทั้งหมดใส่ใน .env แทน
+
+# --- Data Source ---
+data:
+  mcp_script: "C:/Users/bobco/tradingview-mcp/index.js"
+  settle_secs: 1.5        # รอ chart โหลดหลังเปลี่ยน symbol (วินาที)
+  max_bars: 500           # จำกัดโดย MCP server
+  default_bars: 200       # จำนวนแท่งที่ใช้งานปกติ
+
+# --- Symbols ที่ monitor ---
+symbols:
+  - BTCUSDT
+  - XAUUSD
+  - NASDAQ:AAPL
+  # เพิ่ม symbol ที่ต้องการที่นี่
+
+# --- Timeframes ที่ใช้ (ตาม TradingView resolution format) ---
+timeframes:
+  - "60"    # 1H
+  - "240"   # 4H
+  - "D"     # Daily
+
+# --- Cache TTL (วินาที) ต่อ timeframe ---
+cache_ttl:
+  "1":   60
+  "5":   180
+  "15":  300
+  "60":  300
+  "240": 600
+  "D":   1800
+  "W":   3600
+
+# --- Pivot Engine ---
+pivot:
+  deviation_pct: 5.0      # ZigZag deviation threshold (%)
+  min_pivot_count: 5      # pivot ขั้นต่ำก่อนสร้าง candidate
+
+# --- Elliott Wave hard rules ---
+ew_rules:
+  w2_max_retrace: 99.9    # W2 retrace ไม่เกิน % ของ W1
+  w4_overlap_w1: false    # W4 ห้าม overlap W1 (impulsive)
+  w3_not_shortest: true   # W3 ห้ามสั้นสุดใน W1/W3/W5
+
+# --- Candidate / Screener ---
+screener:
+  patterns:               # pattern ที่ต้องการ scan
+    - impulse
+    - zigzag
+    - triangle
+  min_confidence: 60      # confidence ต่ำกว่านี้ → log เท่านั้น ไม่ alert
+
+# --- Alert ---
+alert:
+  confidence_threshold: 70  # ส่ง alert เฉพาะ confidence ≥ นี้
+  cooldown_minutes: 60       # กัน spam: ห้ามส่ง symbol เดิมซ้ำใน X นาที
+  channels:
+    line_notify: false
+    telegram: true
+
+# --- Chart Render ---
+chart:
+  enabled: true
+  style: "candlestick"
+  layers:
+    wave_labels: true
+    fibonacci: true
+    entry_stop_target: true
+    alternate_scenario: true
+  output_dir: "output/charts"
+
+# --- Logging ---
+logging:
+  level: "INFO"           # DEBUG / INFO / WARNING / ERROR
+  dir: "logs"
+  rotate_days: 7
